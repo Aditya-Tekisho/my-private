@@ -1,8 +1,8 @@
 """Messages router."""
 from datetime import datetime, timezone
 from typing import List, Optional
-from fastapi import APIRouter, HTTPException, Query
-from pydantic import BaseModel
+from fastapi import APIRouter, HTTPException, Query, Body
+from pydantic import BaseModel, field_validator
 from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.whatsapp import whatsapp_client
@@ -18,6 +18,26 @@ class SendMessageRequest(BaseModel):
     phone: str
     message: str
     contact_name: Optional[str] = None
+    
+    @field_validator('phone')
+    @classmethod
+    def validate_phone(cls, v):
+        if not v or not v.strip():
+            raise ValueError('Phone number is required')
+        # Remove spaces and validate format
+        cleaned = ''.join(c for c in v if c.isdigit() or c == '+')
+        if len(cleaned) < 10:
+            raise ValueError('Invalid phone number format')
+        return v.strip()
+    
+    @field_validator('message')
+    @classmethod
+    def validate_message(cls, v):
+        if not v or not v.strip():
+            raise ValueError('Message content is required')
+        if len(v) > 65536:
+            raise ValueError('Message too long (max 65536 characters)')
+        return v
 
 
 class ScheduleMessageRequest(BaseModel):
@@ -26,6 +46,32 @@ class ScheduleMessageRequest(BaseModel):
     message: str
     scheduled_at: datetime
     contact_name: Optional[str] = None
+    
+    @field_validator('phone')
+    @classmethod
+    def validate_phone(cls, v):
+        if not v or not v.strip():
+            raise ValueError('Phone number is required')
+        cleaned = ''.join(c for c in v if c.isdigit() or c == '+')
+        if len(cleaned) < 10:
+            raise ValueError('Invalid phone number format')
+        return v.strip()
+    
+    @field_validator('message')
+    @classmethod
+    def validate_message(cls, v):
+        if not v or not v.strip():
+            raise ValueError('Message content is required')
+        if len(v) > 65536:
+            raise ValueError('Message too long (max 65536 characters)')
+        return v
+    
+    @field_validator('scheduled_at')
+    @classmethod
+    def validate_scheduled_at(cls, v):
+        if v <= datetime.now(timezone.utc):
+            raise ValueError('Scheduled time must be in the future')
+        return v
 
 
 class MessageResponse(BaseModel):
