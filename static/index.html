@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Automation</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo">
+                <span class="logo-icon">💬</span>
+                <h1>WhatsApp Automation</h1>
+            </div>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-dot disconnected"></span>
+                <span class="status-text">Disconnected</span>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <nav class="nav-menu">
+                    <button class="nav-btn active" data-view="compose">
+                        <span class="nav-icon">✏️</span>
+                        <span>Compose</span>
+                    </button>
+                    <button class="nav-btn" data-view="contacts">
+                        <span class="nav-icon">👥</span>
+                        <span>Contacts</span>
+                    </button>
+                    <button class="nav-btn" data-view="history">
+                        <span class="nav-icon">📜</span>
+                        <span>History</span>
+                    </button>
+                    <button class="nav-btn" data-view="settings">
+                        <span class="nav-icon">⚙️</span>
+                        <span>Settings</span>
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Content Area -->
+            <div class="content">
+                <!-- Compose View -->
+                <section class="view active" id="composeView">
+                    <div class="card">
+                        <h2>Send Message</h2>
+                        <form id="messageForm">
+                            <div class="form-group">
+                                <label for="contactInput">Recipient</label>
+                                <div class="contact-input-wrapper">
+                                    <input 
+                                        type="text" 
+                                        id="contactInput" 
+                                        placeholder="Search contacts or enter phone number"
+                                        autocomplete="off"
+                                    >
+                                    <div class="contact-suggestions" id="contactSuggestions"></div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="messageInput">Message</label>
+                                <textarea 
+                                    id="messageInput" 
+                                    placeholder="Type your message..."
+                                    rows="5"
+                                ></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="scheduleCheck">
+                                    <span>Schedule for later</span>
+                                </label>
+                            </div>
+                            <div class="form-group schedule-options" id="scheduleOptions" style="display: none;">
+                                <label for="scheduleDate">Schedule Date/Time</label>
+                                <input type="datetime-local" id="scheduleDate">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="scheduleBtn">
+                                    📅 Schedule
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    🚀 Send Now
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Contacts View -->
+                <section class="view" id="contactsView">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Contacts</h2>
+                            <button class="btn btn-secondary" id="refreshContacts">
+                                🔄 Refresh
+                            </button>
+                        </div>
+                        <div class="search-box">
+                            <input 
+                                type="text" 
+                                id="contactSearch" 
+                                placeholder="Search contacts..."
+                            >
+                        </div>
+                        <div class="contacts-list" id="contactsList">
+                            <p class="empty-state">No contacts loaded</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- History View -->
+                <section class="view" id="historyView">
+                    <div class="card">
+                        <h2>Message History</h2>
+                        <div class="filter-tabs">
+                            <button class="filter-tab active" data-filter="all">All</button>
+                            <button class="filter-tab" data-filter="sent">Sent</button>
+                            <button class="filter-tab" data-filter="pending">Pending</button>
+                            <button class="filter-tab" data-filter="failed">Failed</button>
+                        </div>
+                        <div class="message-list" id="messageList">
+                            <p class="empty-state">No messages yet</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings View -->
+                <section class="view" id="settingsView">
+                    <div class="card">
+                        <h2>Settings</h2>
+                        <div class="settings-section">
+                            <h3>WhatsApp Connection</h3>
+                            <div class="auth-section" id="authSection">
+                                <button class="btn btn-primary" id="connectBtn">
+                                    🔗 Connect to WhatsApp
+                                </button>
+                                <div class="qr-modal" id="qrModal">
+                                    <div class="qr-content">
+                                        <h3>Scan QR Code</h3>
+                                        <p>Open WhatsApp on your phone and scan this QR code</p>
+                                        <div class="qr-image" id="qrImage"></div>
+                                        <div class="qr-status" id="qrStatus">Waiting for scan...</div>
+                                        <button class="btn btn-secondary" id="closeQr">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-danger" id="disconnectBtn" style="display: none;">
+                                🔓 Disconnect
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3>About</h3>
+                        <p class="version">Version 1.0.0</p>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Toast Notifications -->
+        <div class="toast-container" id="toastContainer"></div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
